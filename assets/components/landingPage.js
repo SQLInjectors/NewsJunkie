@@ -1,14 +1,11 @@
-import Expo from 'expo';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import LandingPage from './assets/components/landingPage';
 
-class App extends React.Component {
+class LandingPage extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Working on Auth fdasf</Text>
-        <LandingPage/>
+        <Text>This is the landing page</Text>
       </View>
     );
   }
@@ -17,11 +14,12 @@ class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'grey',
+    maxHeight: 600,
+    width: 400,
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
-
 });
 
-Expo.registerRootComponent(App);
+export default LandingPage;
