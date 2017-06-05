@@ -19,7 +19,10 @@ class LandingPage extends React.Component {
     };
   }
 
-
+  submitInfo() {
+    // SUBMIT REQUEST TO BACKEND AND PASS USER INFO ALONG
+    // USER TOKEN && ACCOUNT TOKEN
+  }
 
   onChange(field, value) {
     this.setState({
@@ -32,7 +35,7 @@ class LandingPage extends React.Component {
       return(
         <View style={styles.container1}>
             <View style={styles.authView}>
-              <Image style={styles.icons} source={require('../images/person.png')} />
+              <Image style={styles.icons} source={require('../images/email.png')} />
               <TextInput
                 value={this.props.value}
                 placeholder="email"
@@ -40,7 +43,7 @@ class LandingPage extends React.Component {
                 blurOnSubmit={false}
                 returnKeyType="done"
                 style={styles.input}
-                onChangeText={(value) => this.onChange("email", value)}
+                onChangeText={(value) => this.onChange("fullName", value)}
                 />
             </View>
 
@@ -61,11 +64,27 @@ class LandingPage extends React.Component {
     } else {
       return(
         <View style={styles.container1}>
+
+        <View style={styles.authView}>
+          <Image style={styles.icons} source={require('../images/person.png')} />
+          <TextInput
+            value={this.props.value}
+            placeholder="full name"
+            secureTextEntry={true}
+            blurOnSubmit={false}
+            returnKeyType="done"
+            style={styles.input}
+            onChangeText={(value) => this.onChange("password", value)}
+            onSubmitEditing={this.props.onAddItem}
+            />
+        </View>
+
             <View style={styles.authView}>
-              <Image style={styles.icons} source={require('../images/person.png')} />
+              <Image style={styles.icons} source={require('../images/email.png')} />
               <TextInput
                 value={this.props.value}
-                placeholder="Input your email"
+                placeholder="email"
+                keyboardType="email-address"
                 blurOnSubmit={false}
                 returnKeyType="done"
                 style={styles.input}
@@ -78,7 +97,7 @@ class LandingPage extends React.Component {
               <Image style={styles.icons} source={require('../images/lock.png')} />
               <TextInput
                 value={this.props.value}
-                placeholder="Input your password"
+                placeholder="password"
                 secureTextEntry={true}
                 blurOnSubmit={false}
                 returnKeyType="done"
@@ -138,7 +157,7 @@ const styles = StyleSheet.create({
     height: 35,
     fontSize: 30,
     color: 'white',
-    marginBottom: 20,
+    marginBottom: 10,
     marginTop: 50,
     textAlign: 'center',
   },
@@ -147,7 +166,7 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 20,
+    margin: 10,
   },
   newsImage: {
     marginBottom: 10,
