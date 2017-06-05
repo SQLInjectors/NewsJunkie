@@ -146,6 +146,7 @@ class LandingPage extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 30,
     flex: 1,
     backgroundColor: '#4CAFA6',
     alignItems: 'center',
@@ -166,7 +167,6 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 10,
   },
   newsImage: {
     marginBottom: 10,
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   container1: {
-    maxHeight: 400,
+    maxHeight: 200,
     width: 400,
     alignItems: 'center',
     justifyContent: 'center'
