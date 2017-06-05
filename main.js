@@ -7,7 +7,6 @@ class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Working on Auth fdasf</Text>
         <LandingPage/>
       </View>
     );
@@ -20,7 +19,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'grey',
     alignItems: 'center',
     justifyContent: 'center',
-  },
+  }
 
 });
 
