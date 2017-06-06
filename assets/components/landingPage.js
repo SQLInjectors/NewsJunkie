@@ -7,8 +7,8 @@ import { StyleSheet,
          Button,
          Image,
          KeyboardAvoidingView} from 'react-native';
-import firebaseApp from '../services/Firebase'
-import { Actions } from 'react-native-router-flux'
+import firebaseApp from '../services/Firebase';
+import { Actions } from 'react-native-router-flux';
 
 class LandingPage extends React.Component {
   constructor(props) {
@@ -82,8 +82,6 @@ class LandingPage extends React.Component {
       })
   }
 
-// Action.feed({profile_id: this.state.profile_id, accountToken: this.state.accountToken}
-
   getAllProfiles(){
 
     return fetch(`http://raas-se-prod.cognik.us/v1/accounts/hackathon04/profiles`, {
@@ -107,10 +105,6 @@ class LandingPage extends React.Component {
         }
       })
   }
-
-
-
-  // 36D4tb92pPHRx8Sq5jf8YA==
 
   registerProfile(){
     fetch(`http://raas-se-prod.cognik.us/v1/accounts/hackathon04/profiles/${this.state.profile_id}`, {
@@ -137,7 +131,6 @@ class LandingPage extends React.Component {
   submitInfo() {
     // SUBMIT REQUEST TO BACKEND AND PASS USER INFO ALONG
     // USER TOKEN && ACCOUNT TOKEN
-
 
     if (this.state.formType === 'Sign Up'){
       this.getAccountKey().then((response) => {
@@ -317,8 +310,10 @@ const styles = StyleSheet.create({
   formType: {
     flexDirection: 'row',
     height: 40,
+    marginTop: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'transparent',
   },
   newsImage: {
     marginBottom: 10,
@@ -333,6 +328,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     textAlign: 'center',
+
   },
   buttonWrapper: {
     backgroundColor: '#1D727E',
@@ -364,18 +360,11 @@ const styles = StyleSheet.create({
   input: {
     width: 250,
     height: 35,
-    marginTop: 10,
+    marginTop: 5,
     padding: 5,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: '#d6d7da',
-  },
-  inputFields: {
-    width: 280,
-    height: 25,
-    color: '#1D727E',
-    justifyContent: 'flex-start',
-    marginBottom: 5,
   },
   authView: {
     height: 50,
@@ -383,16 +372,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 5,
   },
   icons: {
     marginRight: 10,
   },
   button: {
     color: 'white',
-    backgroundColor: 'pink',
     width: 60,
-    height: 100,
+    height: 90,
   }
 });
 
