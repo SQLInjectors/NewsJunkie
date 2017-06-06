@@ -18,6 +18,7 @@ class ShowPage extends Component {
       profile_id: this.props.profile_id,
       content_id: this.props.content_id,
       reco_id: this.props.reco_id,
+      token: this.props.token,
       precentage_viewed: 100
     } };
     this.hideActions = this.hideActions.bind(this);
@@ -47,6 +48,7 @@ class ShowPage extends Component {
     return () => {
       let data = this.state.data;
       data.duration_viewed = this.getTimeViewed();
+      data.type = type;
       this.setState({data}, () => {
         sendImpression(data);
       });
