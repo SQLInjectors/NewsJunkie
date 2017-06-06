@@ -7,6 +7,7 @@ import { StyleSheet,
          Button,
          Image,
          KeyboardAvoidingView} from 'react-native';
+import firebaseApp from '../services/Firebase'
 
 class LandingPage extends React.Component {
   constructor(props) {
@@ -22,6 +23,31 @@ class LandingPage extends React.Component {
   submitInfo() {
     // SUBMIT REQUEST TO BACKEND AND PASS USER INFO ALONG
     // USER TOKEN && ACCOUNT TOKEN
+    if (this.state.formType === 'Sign Up'){
+      firebaseApp.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+      .then(function(response){
+        console.log("Sign up successful")
+        //REDIRECT TO FEED
+      })
+      .catch(function(error){
+       var errorCode = error.code
+       var errorMessage = error.message;
+       console.log(errorMessage)
+      })
+    } else if (this.state.formType === 'Log In'){
+      firebaseApp.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+      .then(function(response){
+        console.log("Log in successful")
+        //REDIRECT TO FEED
+      })
+      .catch(function(error) {
+
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      console.log(errorMessage)
+      });
+    }
+
   }
 
   onChange(field, value) {
@@ -43,7 +69,8 @@ class LandingPage extends React.Component {
                 blurOnSubmit={false}
                 returnKeyType="done"
                 style={styles.input}
-                onChangeText={(value) => this.onChange("fullName", value)}
+                autoCapitalize="none"
+                onChangeText={(value) => this.onChange("email", value)}
                 />
             </View>
 
@@ -70,7 +97,7 @@ class LandingPage extends React.Component {
           <TextInput
             value={this.props.value}
             placeholder="full name"
-            secureTextEntry={true}
+            secureTextEntry={false}
             blurOnSubmit={false}
             returnKeyType="done"
             style={styles.input}
@@ -85,9 +112,11 @@ class LandingPage extends React.Component {
                 value={this.props.value}
                 placeholder="email"
                 keyboardType="email-address"
+                secureTextEntry={false}
                 blurOnSubmit={false}
                 returnKeyType="done"
                 style={styles.input}
+                autoCapitalize="none"
                 onChangeText={(value) => this.onChange("email", value)}
                 onSubmitEditing={this.props.onAddItem}
                 />
@@ -135,7 +164,7 @@ class LandingPage extends React.Component {
                 />
             </View>
               {authForm}
-            <TouchableOpacity style={styles.buttonWrapper} onPress={this.submitInfo}>
+            <TouchableOpacity style={styles.buttonWrapper} onPress={() => this.submitInfo()}>
               <Text style={styles.buttonText}>{this.state.formType}</Text>
             </TouchableOpacity>
           </View>
