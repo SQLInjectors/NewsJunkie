@@ -8,7 +8,7 @@ import { StyleSheet,
          Image,
          KeyboardAvoidingView} from 'react-native';
 import firebaseApp from '../services/Firebase'
-import { Action } from 'react-native-router-flux'
+import { Actions } from 'react-native-router-flux'
 
 class LandingPage extends React.Component {
   constructor(props) {
@@ -70,11 +70,13 @@ class LandingPage extends React.Component {
       })
     }).then ((response)=> response.json())
       .then((responseJSON) => {
-        console.log(responseJSON.token);
         this.setState({
           accountToken: responseJSON.token
         })
-      }).then(() => console.log("call Action.feed here"))
+      }).then(() => Actions.feed({
+        profile_id: this.state.profile_id,
+        token: this.state.accountToken
+      }))
       .catch((error) => {
         console.log(error);
       })
@@ -122,8 +124,10 @@ class LandingPage extends React.Component {
       body: JSON.stringify({})
     }).then ((response)=> response.json())
       .then((responseJSON) => {
-        console.log(responseJSON)
-        console.log("call Action.feed here")
+        () => Actions.feed({
+          profile_id: this.state.profile_id,
+          token: this.state.accountToken
+        })
       })
       .catch((error) => {
         console.log(error);

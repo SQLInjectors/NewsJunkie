@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { sendImpression } from './util';
 import {
   View,
   Text,
@@ -8,13 +9,13 @@ import {
   Image,
   ActivityIndicator
 } from 'react-native';
+import { Actions } from 'react-native-router-flux';
 
 class Feed extends Component {
   constructor() {
     super();
 
     this.state = {
-      accountToken: 'TpHTuVSY4VP3Wi7Ic24K4w==',
       feedContents: [],
       reco_id: ''
     }
@@ -28,8 +29,8 @@ class Feed extends Component {
   }
 
   getNewsFeed() {
-    const { accountToken } = this.state;
-    if (accountToken) this.getAccountProfile(accountToken);
+    const accountToken = this.props.token;
+    if (accountToken) this.getAccountProfile(accountToken, this.props.profile_id);
   }
 
   getAccountProfile(token, profile = 'rithy'){
@@ -44,7 +45,7 @@ class Feed extends Component {
       body: JSON.stringify({
         'size': 20
       })
-    }).then ((response)=> response.json())
+    }).then((response)=> response.json())
       .then((responseJSON) => {
         this.setState({
           feedContents: responseJSON.contents,
@@ -56,11 +57,22 @@ class Feed extends Component {
       })
   }
 
+  renderShow(item) {
+    return () => Actions.show({
+      url: item.AP_URL,
+      title: item.Title,
+      profile_id: this.props.profile_id,
+      content_id: item.uid,
+      reco_id: this.state.reco_id,
+      token: this.props.token,
+    });
+  }
+
   renderItem = ({item}) => {
     return (
       <View style={styles.row}>
         <Image source={{uri: item.Image_URL}} style={styles.image} />
-        <View style={styles.text}>
+        <View style={styles.text} onPress={this.renderShow(item)}>
           <Text style={styles.title}>
             {item.Title}
           </Text>
@@ -71,17 +83,28 @@ class Feed extends Component {
         <View style={styles.text}>
           <Button
             title={'Remove'}
-            onPress={() => this.removeItem(item.uid)}
+            onPress={() => this.removeItem(item)}
             />
         </View>
       </View>
     )
   }
 
-  removeItem(id){
+  removeItem(item){
     let newFeedContents = Array.from(this.state.feedContents);
-    let itemIndex = newFeedContents.findIndex((element) => element.uid == id);
+    let itemIndex = newFeedContents.findIndex((element) => element.uid == item.uid);
     newFeedContents.splice(itemIndex, 1);
+    let data = {
+      profile_id: this.props.profile_id,
+      content_id: item.uid,
+      reco_id: this.state.reco_id,
+      token: this.props.token,
+      type: 'skip',
+      percentage_viewed: 0,
+      duration_viewed: 0
+    };
+
+    sendImpression(data);
 
     this.setState({
       feedContents: newFeedContents
@@ -90,7 +113,7 @@ class Feed extends Component {
 
   render() {
     let flatList;
-    const { accountToken, feedContents } = this.state;
+    const { feedContents } = this.state;
 
     if (!feedContents.length) {
       return (
