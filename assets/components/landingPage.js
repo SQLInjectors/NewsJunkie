@@ -6,16 +6,17 @@ import { StyleSheet,
          TouchableOpacity,
          Button,
          Image,
-         KeyboardAvoidingView} from 'react-native';
-import firebaseApp from '../services/Firebase';
-import { Actions } from 'react-native-router-flux';
+         KeyboardAvoidingView,
+         StatusBar} from 'react-native';
+import firebaseApp from '../services/Firebase'
+import { Actions } from 'react-native-router-flux'
 
 class LandingPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       fullName: null,
-      email: null,
+      email: "",
       password: null,
       formType: "Log In",
       accountToken: "",
@@ -117,12 +118,11 @@ class LandingPage extends React.Component {
       },
       body: JSON.stringify({})
     }).then ((response)=> response.json())
-      .then((responseJSON) => {
-        () => Actions.feed({
+      .then(() => Actions.feed({
           profile_id: this.state.profile_id,
           token: this.state.accountToken
         })
-      })
+      )
       .catch((error) => {
         console.log(error);
       })
@@ -139,7 +139,7 @@ class LandingPage extends React.Component {
           .then((response) => {
             console.log("Sign up successful")
             this.setState({profile_id: response.uid})
-            this.getAccountKey()
+            this.registerProfile()
           })
           .catch(function(error){
            var errorCode = error.code
@@ -261,6 +261,10 @@ class LandingPage extends React.Component {
     const authForm = this.formType();
     return (
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
+        <StatusBar
+          backgroundColor="#4CAFA6"
+          />
+
         <View style={styles.welcome}>
           <Text style={styles.title}>Welcome To News Junkie</Text>
           <Text style={styles.tagline}>For personalized content at your fingertips</Text>
