@@ -19,7 +19,7 @@ class ShowPage extends Component {
       content_id: this.props.content_id,
       reco_id: this.props.reco_id,
       token: this.props.token,
-      precentage_viewed: 100
+      percentage_viewed: 100
     } };
     this.hideActions = this.hideActions.bind(this);
     this.onLoad = this.onLoad.bind(this);

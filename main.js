@@ -11,9 +11,9 @@ class App extends React.Component {
     return (
       <Router>
         <Scene key="root">
-          <Scene key="landingPage" component={LandingPage} initial={true} />
-          <Scene key='feed' component={Feed} title='News Feed' />
-          <Scene key='show' component={Show} title='Article' />
+          <Scene key="landingPage" component={LandingPage} initial={true} hideNavBar={true}/>
+          <Scene key='feed' component={Feed} title='News Feed' hideNavBar={true}/>
+          <Scene key='show' component={Show} title='Article' hideNavBar={false} />
         </Scene>
       </Router>
     );

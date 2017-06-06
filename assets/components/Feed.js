@@ -7,7 +7,8 @@ import {
   Button,
   FlatList,
   Image,
-  ActivityIndicator
+  ActivityIndicator,
+  TouchableOpacity
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
@@ -58,13 +59,14 @@ class Feed extends Component {
   }
 
   renderShow(item) {
-    return () => Actions.show({
+    item.viewed = true;
+    Actions.show({
       url: item.AP_URL,
       title: item.Title,
       profile_id: this.props.profile_id,
       content_id: item.uid,
       reco_id: this.state.reco_id,
-      token: this.props.token,
+      token: this.props.token
     });
   }
 
@@ -72,15 +74,15 @@ class Feed extends Component {
     return (
       <View style={styles.row}>
         <Image source={{uri: item.Image_URL}} style={styles.image} />
-        <View style={styles.text} onPress={this.renderShow(item)}>
+        <TouchableOpacity style={styles.text} onPress={() => this.renderShow(item)}>
           <Text style={styles.title}>
             {item.Title}
           </Text>
           <Text >
             By {item.Source}
           </Text>
-        </View>
-        <View style={styles.text}>
+        </TouchableOpacity>
+        <View>
           <Button
             title={'Remove'}
             onPress={() => this.removeItem(item)}
@@ -100,7 +102,7 @@ class Feed extends Component {
       reco_id: this.state.reco_id,
       token: this.props.token,
       type: 'skip',
-      percentage_viewed: 0,
+      percentage_viewed: 1,
       duration_viewed: 0
     };
 
@@ -133,7 +135,22 @@ class Feed extends Component {
 
     return (
       <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>Welcome, here's todays news!</Text>
+          </View>
+
           {flatList}
+
+          <Image
+            onPress={this.getNewsFeed}
+            style={styles.avatar}
+            source={require('../images/shiba.png')}
+            />
+            <Image
+              onPress={this.getNewsFeed}
+              style={styles.avatar}
+              source={require('../images/chatbubble.png')}
+              />
       </View>
     );
   }
@@ -142,7 +159,7 @@ class Feed extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#7E8687',
+    backgroundColor: '#4CAFA6',
   },
   row: {
     flex: 1,
@@ -166,6 +183,31 @@ const styles = StyleSheet.create({
    alignItems: 'center',
    justifyContent: 'center',
    padding: 8,
+ },
+ header: {
+   marginTop: 25,
+   alignSelf: "center",
+   marginBottom: 10
+ },
+ headerText: {
+   fontSize: 18,
+   fontWeight: "bold"
+ },
+ avatar: {
+   width: 50,
+   height: 50,
+   zIndex: 10,
+   position: "absolute",
+   right: 10,
+   bottom: 5
+ },
+ chatBubble: {
+   width: 50,
+   height: 50,
+   zIndex: 10,
+   position: "absolute",
+   right: 10,
+   bottom: 20
  }
 });
 
