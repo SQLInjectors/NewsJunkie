@@ -82,11 +82,10 @@ class Feed extends Component {
             By {item.Source}
           </Text>
         </TouchableOpacity>
-        <View>
-          <Button
-            title={'Remove'}
-            onPress={() => this.removeItem(item)}
-            />
+        <View style={styles.trashWrapper}>
+          <TouchableOpacity onPress={() => this.removeItem(item)}>
+            <Image source={require('../images/trash.png')} />
+          </TouchableOpacity>
         </View>
       </View>
     )
@@ -200,6 +199,12 @@ const styles = StyleSheet.create({
    position: "absolute",
    right: 10,
    bottom: 5
+ },
+ trashWrapper: {
+   width: 100,
+   height: 50,
+   justifyContent: 'center',
+   alignItems: 'center',
  },
  chatBubble: {
    width: 50,
