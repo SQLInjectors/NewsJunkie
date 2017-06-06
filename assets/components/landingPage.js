@@ -17,7 +17,57 @@ class LandingPage extends React.Component {
       email: null,
       password: null,
       formType: "Log In",
+      accountToken: "",
+      account_id: ""
     };
+    this.getAccountKey = this.getAccountKey.bind(this);
+    this.registerProfile = this.registerProfile.bind(this);
+  }
+
+  getAccountKey(){
+    fetch('http://raas-se-prod.cognik.us/v1/login/hackathon04', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'x-platform-id': 'phone',
+        'Host': 'raas-se-prod.cognik.us'
+      },
+      body: JSON.stringify({
+        'app_id': 'SE_rDW4TUCC8a',
+        'password': '3gcZpU6hd2'
+      })
+    }).then ((response)=> response.json())
+      .then((responseJSON) => {
+        console.log(responseJSON.token);
+        this.setState({
+          accountToken: responseJSON.token
+        })
+      }).then(() => this.registerProfile())
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
+  // 36D4tb92pPHRx8Sq5jf8YA==
+
+  registerProfile(){
+    fetch(`http://raas-se-prod.cognik.us/v1/accounts/hackathon04/profiles/${this.state.account_id}`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'x-platform-id': 'phone',
+        'x-app-token': this.state.accountToken
+      },
+      body: JSON.stringify({})
+    }).then ((response)=> response.json())
+      .then((responseJSON) => {
+        console.log(responseJSON)
+      })
+      .catch((error) => {
+        console.log(error);
+      })
   }
 
   submitInfo() {
@@ -25,9 +75,10 @@ class LandingPage extends React.Component {
     // USER TOKEN && ACCOUNT TOKEN
     if (this.state.formType === 'Sign Up'){
       firebaseApp.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
-      .then(function(response){
+      .then((response) => {
         console.log("Sign up successful")
-        //REDIRECT TO FEED
+        this.setState({account_id: response.uid})
+        this.getAccountKey()
       })
       .catch(function(error){
        var errorCode = error.code
