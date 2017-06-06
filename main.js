@@ -3,6 +3,7 @@ import React from 'react';
 import { Router, Scene } from 'react-native-router-flux';
 import { StyleSheet, Text, View } from 'react-native';
 import LandingPage from './assets/components/landingPage';
+import Feed from './assets/components/Feed';
 
 class App extends React.Component {
   render() {
@@ -10,6 +11,7 @@ class App extends React.Component {
       <Router>
         <Scene key="root">
           <Scene key="landingPage" component={LandingPage} initial={true} />
+          <Scene key='feed' component={Feed}  title={News Feed} />
         </Scene>
       </Router>
     );
