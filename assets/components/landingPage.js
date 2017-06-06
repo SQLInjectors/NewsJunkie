@@ -8,6 +8,7 @@ import { StyleSheet,
          Image,
          KeyboardAvoidingView} from 'react-native';
 import firebaseApp from '../services/Firebase'
+import { Action } from 'react-native-router-flux'
 
 class LandingPage extends React.Component {
   constructor(props) {
@@ -18,13 +19,43 @@ class LandingPage extends React.Component {
       password: null,
       formType: "Log In",
       accountToken: "",
-      account_id: ""
+      profile_id: "",
+      profile_details: null
     };
     this.getAccountKey = this.getAccountKey.bind(this);
+    this.getAccountKey2 = this.getAccountKey2.bind(this);
     this.registerProfile = this.registerProfile.bind(this);
+    this.submitInfo = this.submitInfo.bind(this);
+    this.getAllProfiles = this.getAllProfiles.bind(this);
   }
 
   getAccountKey(){
+    return fetch('http://raas-se-prod.cognik.us/v1/login/hackathon04', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'x-platform-id': 'phone',
+        'Host': 'raas-se-prod.cognik.us'
+      },
+      body: JSON.stringify({
+        'app_id': 'SE_rDW4TUCC8a',
+        'password': '3gcZpU6hd2'
+      })
+    }).then ((response)=> response.json())
+      .then((responseJSON) => {
+        console.log(responseJSON.token);
+        this.setState({
+          accountToken: responseJSON.token
+        })
+      }).then(() => this.getAllProfiles())
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
+  getAccountKey2(){
+
     fetch('http://raas-se-prod.cognik.us/v1/login/hackathon04', {
       method: 'POST',
       headers: {
@@ -43,16 +74,44 @@ class LandingPage extends React.Component {
         this.setState({
           accountToken: responseJSON.token
         })
-      }).then(() => this.registerProfile())
+      }).then(() => console.log("call Action.feed here"))
       .catch((error) => {
         console.log(error);
       })
   }
 
+// Action.feed({profile_id: this.state.profile_id, accountToken: this.state.accountToken}
+
+  getAllProfiles(){
+
+    return fetch(`http://raas-se-prod.cognik.us/v1/accounts/hackathon04/profiles`, {
+      method: "GET",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'x-platform-id': 'phone',
+        'Host': 'raas-se-prod.cognik.us',
+        'x-app-token': this.state.accountToken
+      }
+    })
+      .then((response) => response.json())
+      .then((responseJSON) => {
+        console.log(responseJSON);
+        if (responseJSON.size <= 4){
+          return true
+        } else {
+          console.log("Reached COGNIK account limit!")
+          return false
+        }
+      })
+  }
+
+
+
   // 36D4tb92pPHRx8Sq5jf8YA==
 
   registerProfile(){
-    fetch(`http://raas-se-prod.cognik.us/v1/accounts/hackathon04/profiles/${this.state.account_id}`, {
+    fetch(`http://raas-se-prod.cognik.us/v1/accounts/hackathon04/profiles/${this.state.profile_id}`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -64,6 +123,7 @@ class LandingPage extends React.Component {
     }).then ((response)=> response.json())
       .then((responseJSON) => {
         console.log(responseJSON)
+        console.log("call Action.feed here")
       })
       .catch((error) => {
         console.log(error);
@@ -73,22 +133,30 @@ class LandingPage extends React.Component {
   submitInfo() {
     // SUBMIT REQUEST TO BACKEND AND PASS USER INFO ALONG
     // USER TOKEN && ACCOUNT TOKEN
+
+
     if (this.state.formType === 'Sign Up'){
-      firebaseApp.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
-      .then((response) => {
-        console.log("Sign up successful")
-        this.setState({account_id: response.uid})
-        this.getAccountKey()
-      })
-      .catch(function(error){
-       var errorCode = error.code
-       var errorMessage = error.message;
-       console.log(errorMessage)
+      this.getAccountKey().then((response) => {
+        if (response){
+          firebaseApp.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+          .then((response) => {
+            console.log("Sign up successful")
+            this.setState({profile_id: response.uid})
+            this.getAccountKey()
+          })
+          .catch(function(error){
+           var errorCode = error.code
+           var errorMessage = error.message;
+           console.log(errorMessage)
+          })
+        }
       })
     } else if (this.state.formType === 'Log In'){
       firebaseApp.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-      .then(function(response){
+      .then((response) => {
         console.log("Log in successful")
+        this.setState({profile_id: response.uid})
+        this.getAccountKey2()
         //REDIRECT TO FEED
       })
       .catch(function(error) {
