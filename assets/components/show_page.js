@@ -21,7 +21,8 @@ class ShowPage extends Component {
       reco_id: this.props.reco_id,
       token: this.props.token,
       percentage_viewed: 100
-    } };
+    },
+    impression: '' };
     this.hideActions = this.hideActions.bind(this);
     this.onLoad = this.onLoad.bind(this);
     this.handleAction = this.handleAction.bind(this);
@@ -35,6 +36,7 @@ class ShowPage extends Component {
 
 
   componentWillUnmount() {
+    debugger
     const viewTime = Date.now() - this.state.startTime;
     this.handleAction('view');
   }
@@ -52,7 +54,7 @@ class ShowPage extends Component {
       let data = this.state.data;
       data.duration_viewed = this.getTimeViewed();
       data.type = type;
-      this.setState({data}, () => {
+      this.setState({data, impression: type}, () => {
         sendImpression(data);
       });
     };
@@ -62,13 +64,33 @@ class ShowPage extends Component {
     if(this.state.hidden) {
       return <Text></Text>;
     } else {
+      let liked;
+      let skipped;
+      let styleLike = styles.actions;
+      let styleSkip = styles.actions;
+
+      if(this.state.impression === 'like') {
+        liked = true;
+        styleLike = styles.disabledActions;
+      }
+
+      if(this.state.impression === 'skip') {
+        skipped = true;
+        styleSkip = styles.disabledActions;
+      }
+      debugger
+
       return <View style={styles.actionsContainer}>
-        <TouchableOpacity onPress={this.handleAction('like').bind(this)} style={styles.actionButtons}>
-          <Icon name='thumbs-up' style={styles.actions} title='Like'></Icon>
+        <TouchableOpacity
+          disabled={liked}
+          onPress={this.handleAction('like').bind(this)} style={styles.actionButtons}>
+          <Icon name='thumbs-up' style={styleLike} title='Like'></Icon>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={this.handleAction('skip').bind(this)} style={styles.actionButtons}>
-          <Icon name='thumbs-down' style={styles.actions} title='Dislike'></Icon>
+        <TouchableOpacity
+          disabled={skipped}
+          onPress={this.handleAction('skip').bind(this)} style={styles.actionButtons}>
+          <Icon name='thumbs-down' style={styleSkip} title='Dislike'></Icon>
         </TouchableOpacity>
       </View>;
     }
@@ -110,6 +132,13 @@ const styles = StyleSheet.create({
   },
   actions: {
     color: '#1D727E',
+    fontSize: 35,
+    textAlign: 'center',
+    backgroundColor: 'white',
+    height: 34,
+  },
+  disabledActions: {
+    color: '#949494',
     fontSize: 35,
     textAlign: 'center',
     backgroundColor: 'white',
