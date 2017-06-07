@@ -8,6 +8,7 @@ export const sendImpression = ({
     duration_viewed
   }) => {
     return fetch(`http://raas-se-prod.cognik.us/v1/accounts/hackathon04/profiles/${profile_id}/actions`,
+
     {
       method: 'POST',
       headers: {

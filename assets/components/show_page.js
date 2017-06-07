@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { sendImpression } from './util.js';
+import { Actions } from 'react-native-router-flux';
 
 class ShowPage extends Component {
   constructor(props) {
@@ -26,6 +27,7 @@ class ShowPage extends Component {
     this.handleAction = this.handleAction.bind(this);
     this.props.onBack = this.componentWillUnmount;
   }
+
 
   onLoad() {
     this.setState({startTime: Date.now()});
