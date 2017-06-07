@@ -22,27 +22,27 @@ class ShowPage extends Component {
       token: this.props.token,
       percentage_viewed: 100
     },
+    startTime: Date.now(),
     impression: '' };
     this.hideActions = this.hideActions.bind(this);
-    this.onLoad = this.onLoad.bind(this);
     this.handleAction = this.handleAction.bind(this);
     this.props.onBack = this.componentWillUnmount;
+    this.getTimeViewed = this.getTimeViewed.bind(this);
   }
-
-
-  onLoad() {
-    this.setState({startTime: Date.now()});
-  }
-
 
   componentWillUnmount() {
-    debugger
-    const viewTime = Date.now() - this.state.startTime;
-    this.handleAction('view');
+    let data = this.state.data;
+    data.duration_viewed = this.getTimeViewed();
+    data.type = 'view';
+    sendImpression(data);
   }
 
   getTimeViewed() {
-    return Date.now() - this.state.startTime;
+    let timeViewed = Date.now() - this.state.startTime;
+    if(!timeViewed) {
+      timeViewed = 0;
+    }
+    return timeViewed;
   }
 
   hideActions() {
@@ -78,7 +78,6 @@ class ShowPage extends Component {
         skipped = true;
         styleSkip = styles.disabledActions;
       }
-      debugger
 
       return <View style={styles.actionsContainer}>
         <TouchableOpacity
