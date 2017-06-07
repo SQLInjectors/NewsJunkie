@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { sendImpression } from './util.js';
+import { Actions } from 'react-native-router-flux';
 
 class ShowPage extends Component {
   constructor(props) {
@@ -19,21 +20,11 @@ class ShowPage extends Component {
       content_id: this.props.content_id,
       reco_id: this.props.reco_id,
       token: this.props.token,
-      precentage_viewed: 100
+      percentage_viewed: 100
     } };
     this.hideActions = this.hideActions.bind(this);
     this.onLoad = this.onLoad.bind(this);
     this.handleAction = this.handleAction.bind(this);
-  }
-
-  onLoad() {
-    this.setState({startTime: Date.now()});
-  }
-
-  componentWillUnmount() {
-    const viewTime = Date.now() - this.state.startTime;
-    // if(viewTime < x) action('bounce')
-    this.handleAction('view');
   }
 
   getTimeViewed() {

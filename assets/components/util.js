@@ -7,6 +7,7 @@ export const sendImpression = ({
     percentage_viewed,
     duration_viewed
   }) => {
+    console.log('hit');
     return fetch(`http://raas-se-prod.cognik.us/v1/accounts/hackathon04/profiles/${profile_id}/actions`),
     {
       method: 'POST',
@@ -20,7 +21,7 @@ export const sendImpression = ({
         'content_id': content_id,
         'reco_id': reco_id,
         'type': type,
-        'precentage_viewed': percentage_viewed,
+        'percentage_viewed': percentage_viewed,
         'duration_viewed': duration_viewed
       }),
   };
