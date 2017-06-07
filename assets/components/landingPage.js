@@ -30,6 +30,7 @@ class LandingPage extends React.Component {
     this.getAllProfiles = this.getAllProfiles.bind(this);
   }
 
+
   getAccountKey(){
     return fetch('http://raas-se-prod.cognik.us/v1/login/hackathon04', {
       method: 'POST',
@@ -259,11 +260,10 @@ class LandingPage extends React.Component {
 
   render() {
     const authForm = this.formType();
+
     return (
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        <StatusBar
-          backgroundColor="#4CAFA6"
-          />
+
 
         <View style={styles.welcome}>
           <Text style={styles.title}>Welcome To News Junkie</Text>

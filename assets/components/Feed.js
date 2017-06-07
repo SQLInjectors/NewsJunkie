@@ -8,7 +8,8 @@ import {
   FlatList,
   Image,
   ActivityIndicator,
-  TouchableOpacity
+  TouchableOpacity,
+  LayoutAnimation
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
@@ -18,11 +19,13 @@ class Feed extends Component {
 
     this.state = {
       feedContents: [],
-      reco_id: ''
+      reco_id: '',
+      bubbleShow: false
     }
     this.getNewsFeed = this.getNewsFeed.bind(this);
     this.getAccountProfile = this.getAccountProfile.bind(this);
     this.removeItem = this.removeItem.bind(this);
+    this.showTextBubble = this.showTextBubble.bind(this);
   }
 
   componentWillMount() {
@@ -30,6 +33,8 @@ class Feed extends Component {
   }
 
   getNewsFeed() {
+    console.log("getting news")
+    this.setState({bubbleShow: false})
     const accountToken = this.props.token;
     if (accountToken) this.getAccountProfile(accountToken, this.props.profile_id);
   }
@@ -66,7 +71,7 @@ class Feed extends Component {
       profile_id: this.props.profile_id,
       content_id: item.uid,
       reco_id: this.state.reco_id,
-      token: this.props.token
+      token: this.props.token,
     });
   }
 
@@ -90,6 +95,11 @@ class Feed extends Component {
         </View>
       </View>
     )
+  }
+
+  showTextBubble(){
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    this.setState({bubbleShow: true})
   }
 
   removeItem(item){
@@ -130,8 +140,15 @@ class Feed extends Component {
 
     const extractKey = ({uid}) => uid
     if(feedContents.length > 0) {
-      flatList = <FlatList data={feedContents} renderItem={this.renderItem} keyExtractor={extractKey} />
+      flatList = <FlatList
+        data={feedContents}
+        renderItem={this.renderItem}
+        keyExtractor={extractKey}
+        onEndReached={() => this.showTextBubble()}
+        onEndReachedThreshold={0.2}/>
     }
+
+    const chatBubbleContainerStyle = this.state.bubbleShow ? styles.chatBubbleContainer : {display: "none"}
 
     return (
       <View style={styles.container}>
@@ -146,11 +163,21 @@ class Feed extends Component {
             style={styles.avatar}
             source={require('../images/shiba.png')}
             />
+          <TouchableOpacity
+            style={chatBubbleContainerStyle}
+            onPress={() => this.getNewsFeed()}>
             <Image
-              onPress={this.getNewsFeed}
-              style={styles.avatar}
+              style={styles.chatBubble}
               source={require('../images/chatbubble.png')}
               />
+            <View
+                style={styles.textBubble}
+                >
+                <Text style={styles.textInBubble}>Get more news!</Text>
+              </View>
+          </TouchableOpacity>
+
+
       </View>
     );
   }
@@ -202,12 +229,28 @@ const styles = StyleSheet.create({
    bottom: 5
  },
  chatBubble: {
-   width: 50,
-   height: 50,
-   zIndex: 10,
+   width: 130,
+   height: 120,
+   zIndex: 12,
    position: "absolute",
-   right: 10,
-   bottom: 20
+   right: 16,
+   bottom: 45
+ },
+ textBubble: {
+   width: 100,
+   height: 78,
+   zIndex: 11,
+   position: "absolute",
+   right: 28,
+   bottom: 70,
+   backgroundColor: "white",
+   borderRadius: 10
+ },
+ textInBubble: {
+   padding: 5
+ },
+ chatBubbleContainer: {
+   zIndex: 11
  }
 });
 
