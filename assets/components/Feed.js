@@ -20,7 +20,9 @@ class Feed extends Component {
     this.state = {
       feedContents: [],
       reco_id: '',
-      bubbleShow: false
+      bubbleShow: false,
+      bubbleText: "Get more news?",
+      animating: true
     }
     this.getNewsFeed = this.getNewsFeed.bind(this);
     this.getAccountProfile = this.getAccountProfile.bind(this);
@@ -33,10 +35,13 @@ class Feed extends Component {
   }
 
   getNewsFeed() {
-    console.log("getting news")
-    this.setState({bubbleShow: false})
+    console.log("getting more news")
     const accountToken = this.props.token;
-    if (accountToken) this.getAccountProfile(accountToken, this.props.profile_id);
+
+    if (accountToken) {
+        this.setState({bubbleShow: false, animating: true},
+          () => this.getAccountProfile(accountToken, this.props.profile_id))
+    }
   }
 
   getAccountProfile(token, profile = 'rithy'){
@@ -55,7 +60,9 @@ class Feed extends Component {
       .then((responseJSON) => {
         this.setState({
           feedContents: responseJSON.contents,
-          reco_id: responseJSON.reco_id
+          reco_id: responseJSON.reco_id,
+          bubbleShow: false,
+          animating: false
         })
       })
       .catch((error) => {
@@ -126,7 +133,7 @@ class Feed extends Component {
     let flatList;
     const { feedContents } = this.state;
 
-    if (!feedContents.length) {
+    if (this.state.animating) {
       return (
         <ActivityIndicator
          animating={true}
@@ -136,6 +143,8 @@ class Feed extends Component {
        />
       )
     }
+
+
 
     const extractKey = ({uid}) => uid
     if(feedContents.length > 0) {
@@ -147,7 +156,7 @@ class Feed extends Component {
         onEndReachedThreshold={0.2}/>
     }
 
-    const chatBubbleContainerStyle = this.state.bubbleShow ? styles.chatBubbleContainer : {display: "none"}
+    const chatBubbleContainerStyle = this.state.bubbleShow ? styles.textBubble : {display: "none"}
 
     return (
       <View style={styles.container}>
@@ -157,26 +166,35 @@ class Feed extends Component {
 
           {flatList}
 
+
           <Image
             onPress={this.getNewsFeed}
             style={styles.avatar}
             source={require('../images/shiba.png')}
             />
-          <TouchableOpacity
-            style={chatBubbleContainerStyle}
-            onPress={() => this.getNewsFeed()}>
-            <Image
-              style={styles.chatBubble}
-              source={require('../images/chatbubble.png')}
-              />
-            <View
-                style={styles.textBubble}
-                >
-                <Text style={styles.textInBubble}>Get more news!</Text>
-              </View>
-          </TouchableOpacity>
+          <View style={chatBubbleContainerStyle}>
+              <Image
+                style={styles.chatBubble}
+                source={require('../images/chatbubble.png')}
+                />
+              <Text style={styles.textInBubble}>{this.state.bubbleText}</Text>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={this.getNewsFeed}
+                    >
+                    <Text style={styles.buttonText}>YES</Text>
+                  </TouchableOpacity>
 
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => this.setState({bubbleShow: false})}
+                    >
+                  <Text style={styles.buttonText}>NO</Text>
+                  </TouchableOpacity>
+                </View>
 
+            </View>
       </View>
     );
   }
@@ -217,7 +235,8 @@ const styles = StyleSheet.create({
  },
  headerText: {
    fontSize: 18,
-   fontWeight: "bold"
+   fontWeight: "bold",
+   color: "white"
  },
  avatar: {
    width: 50,
@@ -236,26 +255,40 @@ const styles = StyleSheet.create({
  chatBubble: {
    width: 130,
    height: 120,
-   zIndex: 12,
-   position: "absolute",
-   right: 16,
-   bottom: 45
- },
- textBubble: {
-   width: 100,
-   height: 78,
    zIndex: 11,
    position: "absolute",
-   right: 28,
-   bottom: 70,
+   right: -15,
+   bottom: -30
+ },
+ textBubble: {
+   width: 99,
+   height: 78,
+   zIndex: 10,
+   position: "absolute",
+   right: 34,
+   bottom: 60,
    backgroundColor: "white",
    borderRadius: 10
  },
  textInBubble: {
-   padding: 5
+   padding: 6,
+   textAlign: "center",
+   fontWeight: "bold"
  },
- chatBubbleContainer: {
-   zIndex: 11
+ button: {
+   zIndex: 14,
+   fontSize: 10,
+   backgroundColor: "transparent"
+ },
+ buttonContainer: {
+   flexDirection: "row",
+   justifyContent: "space-around",
+   paddingRight: 1,
+   zIndex: 13
+ },
+ buttonText: {
+   color: "grey",
+   fontWeight: "bold"
  }
 });
 
