@@ -152,7 +152,7 @@ class Feed extends Component {
     return (
       <View style={styles.container}>
           <View style={styles.header}>
-            <Text style={styles.headerText}>Welcome, here's todays news!</Text>
+            <Text style={styles.headerText}>Here's todays news!</Text>
           </View>
 
           {flatList}

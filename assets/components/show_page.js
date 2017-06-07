@@ -25,7 +25,6 @@ class ShowPage extends Component {
     this.onLoad = this.onLoad.bind(this);
     this.handleAction = this.handleAction.bind(this);
     this.props.onBack = this.componentWillUnmount;
-    debugger
   }
 
   onLoad() {
@@ -35,7 +34,6 @@ class ShowPage extends Component {
 
   componentWillUnmount() {
     const viewTime = Date.now() - this.state.startTime;
-    // if(viewTime < x) action('bounce')
     this.handleAction('view');
   }
 
