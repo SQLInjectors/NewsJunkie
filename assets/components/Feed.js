@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { sendImpression } from './util';
 import {
   View,
   Text,
@@ -6,21 +7,25 @@ import {
   Button,
   FlatList,
   Image,
-  ActivityIndicator
+  ActivityIndicator,
+  TouchableOpacity,
+  LayoutAnimation
 } from 'react-native';
+import { Actions } from 'react-native-router-flux';
 
 class Feed extends Component {
   constructor() {
     super();
 
     this.state = {
-      accountToken: 'TpHTuVSY4VP3Wi7Ic24K4w==',
       feedContents: [],
-      reco_id: ''
+      reco_id: '',
+      bubbleShow: false
     }
     this.getNewsFeed = this.getNewsFeed.bind(this);
     this.getAccountProfile = this.getAccountProfile.bind(this);
     this.removeItem = this.removeItem.bind(this);
+    this.showTextBubble = this.showTextBubble.bind(this);
   }
 
   componentWillMount() {
@@ -28,8 +33,10 @@ class Feed extends Component {
   }
 
   getNewsFeed() {
-    const { accountToken } = this.state;
-    if (accountToken) this.getAccountProfile(accountToken);
+    console.log("getting news")
+    this.setState({bubbleShow: false})
+    const accountToken = this.props.token;
+    if (accountToken) this.getAccountProfile(accountToken, this.props.profile_id);
   }
 
   getAccountProfile(token, profile = 'rithy'){
@@ -44,7 +51,7 @@ class Feed extends Component {
       body: JSON.stringify({
         'size': 20
       })
-    }).then ((response)=> response.json())
+    }).then((response)=> response.json())
       .then((responseJSON) => {
         this.setState({
           feedContents: responseJSON.contents,
@@ -56,32 +63,59 @@ class Feed extends Component {
       })
   }
 
+  renderShow(item) {
+    item.viewed = true;
+    Actions.show({
+      url: item.AP_URL,
+      title: item.Title,
+      profile_id: this.props.profile_id,
+      content_id: item.uid,
+      reco_id: this.state.reco_id,
+      token: this.props.token,
+    });
+  }
+
   renderItem = ({item}) => {
     return (
       <View style={styles.row}>
         <Image source={{uri: item.Image_URL}} style={styles.image} />
-        <View style={styles.text}>
+        <TouchableOpacity style={styles.text} onPress={() => this.renderShow(item)}>
           <Text style={styles.title}>
             {item.Title}
           </Text>
           <Text >
             By {item.Source}
           </Text>
-        </View>
-        <View style={styles.text}>
-          <Button
-            title={'Remove'}
-            onPress={() => this.removeItem(item.uid)}
-            />
+        </TouchableOpacity>
+        <View style={styles.trashWrapper}>
+          <TouchableOpacity onPress={() => this.removeItem(item)}>
+            <Image source={require('../images/trash.png')} />
+          </TouchableOpacity>
         </View>
       </View>
     )
   }
 
-  removeItem(id){
+  showTextBubble(){
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    this.setState({bubbleShow: true})
+  }
+
+  removeItem(item){
     let newFeedContents = Array.from(this.state.feedContents);
-    let itemIndex = newFeedContents.findIndex((element) => element.uid == id);
+    let itemIndex = newFeedContents.findIndex((element) => element.uid == item.uid);
     newFeedContents.splice(itemIndex, 1);
+    let data = {
+      profile_id: this.props.profile_id,
+      content_id: item.uid,
+      reco_id: this.state.reco_id,
+      token: this.props.token,
+      type: 'skip',
+      percentage_viewed: 1,
+      duration_viewed: 0
+    };
+
+    sendImpression(data);
 
     this.setState({
       feedContents: newFeedContents
@@ -90,7 +124,7 @@ class Feed extends Component {
 
   render() {
     let flatList;
-    const { accountToken, feedContents } = this.state;
+    const { feedContents } = this.state;
 
     if (!feedContents.length) {
       return (
@@ -105,12 +139,44 @@ class Feed extends Component {
 
     const extractKey = ({uid}) => uid
     if(feedContents.length > 0) {
-      flatList = <FlatList data={feedContents} renderItem={this.renderItem} keyExtractor={extractKey} />
+      flatList = <FlatList
+        data={feedContents}
+        renderItem={this.renderItem}
+        keyExtractor={extractKey}
+        onEndReached={() => this.showTextBubble()}
+        onEndReachedThreshold={0.2}/>
     }
+
+    const chatBubbleContainerStyle = this.state.bubbleShow ? styles.chatBubbleContainer : {display: "none"}
 
     return (
       <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>Here's todays news!</Text>
+          </View>
+
           {flatList}
+
+          <Image
+            onPress={this.getNewsFeed}
+            style={styles.avatar}
+            source={require('../images/shiba.png')}
+            />
+          <TouchableOpacity
+            style={chatBubbleContainerStyle}
+            onPress={() => this.getNewsFeed()}>
+            <Image
+              style={styles.chatBubble}
+              source={require('../images/chatbubble.png')}
+              />
+            <View
+                style={styles.textBubble}
+                >
+                <Text style={styles.textInBubble}>Get more news!</Text>
+              </View>
+          </TouchableOpacity>
+
+
       </View>
     );
   }
@@ -119,7 +185,7 @@ class Feed extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#7E8687',
+    backgroundColor: '#4CAFA6',
   },
   row: {
     flex: 1,
@@ -143,6 +209,53 @@ const styles = StyleSheet.create({
    alignItems: 'center',
    justifyContent: 'center',
    padding: 8,
+ },
+ header: {
+   marginTop: 25,
+   alignSelf: "center",
+   marginBottom: 10
+ },
+ headerText: {
+   fontSize: 18,
+   fontWeight: "bold"
+ },
+ avatar: {
+   width: 50,
+   height: 50,
+   zIndex: 10,
+   position: "absolute",
+   right: 10,
+   bottom: 5
+ },
+ trashWrapper: {
+   width: 100,
+   height: 50,
+   justifyContent: 'center',
+   alignItems: 'center',
+ },
+ chatBubble: {
+   width: 130,
+   height: 120,
+   zIndex: 12,
+   position: "absolute",
+   right: 16,
+   bottom: 45
+ },
+ textBubble: {
+   width: 100,
+   height: 78,
+   zIndex: 11,
+   position: "absolute",
+   right: 28,
+   bottom: 70,
+   backgroundColor: "white",
+   borderRadius: 10
+ },
+ textInBubble: {
+   padding: 5
+ },
+ chatBubbleContainer: {
+   zIndex: 11
  }
 });
 

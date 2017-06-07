@@ -7,15 +7,15 @@ export const sendImpression = ({
     percentage_viewed,
     duration_viewed
   }) => {
-    console.log('hit');
-    return fetch(`http://raas-se-prod.cognik.us/v1/accounts/hackathon04/profiles/${profile_id}/actions`),
+    return fetch(`http://raas-se-prod.cognik.us/v1/accounts/hackathon04/profiles/${profile_id}/actions`,
+
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'x-app-token': token,
-        'x-patform-id': 'mobile'
+        'x-platform-id': 'phone'
       },
       body: JSON.stringify({
         'content_id': content_id,
@@ -24,5 +24,6 @@ export const sendImpression = ({
         'percentage_viewed': percentage_viewed,
         'duration_viewed': duration_viewed
       }),
-  };
+  }).then((response) => response.json())
+    .then((responseJSON) => console.log(responseJSON));
 };
