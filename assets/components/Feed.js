@@ -146,7 +146,7 @@ class Feed extends Component {
 
 
 
-    const extractKey = ({uid}) => uid
+    const extractKey = ({Title}) => Title
     if(feedContents.length > 0) {
       flatList = <FlatList
         data={feedContents}
