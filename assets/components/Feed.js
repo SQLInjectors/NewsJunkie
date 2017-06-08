@@ -145,11 +145,21 @@ class Feed extends Component {
     }
 
 
-
-    const extractKey = ({Title}) => Title
+    const filteredContents = [];
+    const extractKey = ({uid}) => uid
     if(feedContents.length > 0) {
+
+      for(let i = 0; i < feedContents.length; i++) {
+        let signal = true;
+        for(let j = 0; j < filteredContents.length; j++) {
+          if(filteredContents[j].Title === feedContents[i].Title) signal = false;
+        }
+
+        if(signal) filteredContents.push(feedContents[i]);
+      }
+
       flatList = <FlatList
-        data={feedContents}
+        data={filteredContents}
         renderItem={this.renderItem}
         keyExtractor={extractKey}
         onEndReached={() => this.showTextBubble()}
