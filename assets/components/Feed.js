@@ -287,7 +287,6 @@ const styles = StyleSheet.create({
  },
  button: {
    zIndex: 14,
-   fontSize: 10,
    backgroundColor: "transparent"
  },
  buttonContainer: {

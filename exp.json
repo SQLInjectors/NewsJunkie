@@ -1,7 +1,7 @@
 {
-  "name": "chatbot",
+  "name": "NewsJunkie",
   "description": "An empty new project",
-  "slug": "chatbot",
+  "slug": "NewsJunkie",
   "privacy": "public",
   "sdkVersion": "17.0.0",
   "version": "1.0.0",
