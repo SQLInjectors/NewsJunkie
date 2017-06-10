@@ -6,6 +6,7 @@
 This project was implemented with the following technologies:
 * `React Native` and `JavaScript` for native mobile development and overall structure
 * `Firebase API` for user authorization and database management
+* `Cognik API` for content discovery and personalized recommendations
 * `Expo` boilerplates for faster and less error-prone development
 
 ## About
